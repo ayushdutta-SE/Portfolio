@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FaJava, FaPython, FaGitAlt } from 'react-icons/fa';
 import { SiSpringboot, SiMicrosoftazure, SiDatabricks, SiMysql, SiPostman } from 'react-icons/si';
 
@@ -13,8 +13,8 @@ const skills = [
   { name: 'Git', icon: FaGitAlt, color: '#f05032', cat: 'DevOps', desc: 'Version control and collaborative development across all professional and personal projects.' },
 ];
 
-const RADIUS = 200;
-const CENTER = 260;
+const RADIUS = 240; // Increased radius to give the off-screen curve a massive, smooth layout look
+const CENTER = 300;
 
 export default function Skills() {
   const [rotation, setRotation] = useState(0);
@@ -32,126 +32,127 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60 overflow-hidden">
-      <div className="flex flex-col lg:flex-row items-center gap-12">
-
-        {/* Left text panel */}
-        <div className="lg:w-2/5 flex-shrink-0">
+    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[650px] flex items-center overflow-hidden">
+      
+      {/* LEFT CONTENT HALF */}
+      <div className="w-full lg:w-1/2 z-10 space-y-6">
+        <div>
           <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
           <h3 className="text-4xl font-bold text-slate-100 mt-2 mb-4 leading-tight">
             My <span className="text-blue-400">Skills</span>
           </h3>
-          <div
-            className="rounded-xl p-4 border transition-all duration-500"
-            style={{ borderColor: `${skills[active].color}30`, background: `${skills[active].color}08` }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="text-3xl" style={{ color: skills[active].color }}>
-                {(() => { const Icon = skills[active].icon; return <Icon />; })()}
-              </div>
-              <div>
-                <div className="text-lg font-bold text-slate-100">{skills[active].name}</div>
-                <div className="text-xs font-mono text-slate-500 uppercase tracking-wider">{skills[active].cat}</div>
-              </div>
+        </div>
+
+        {/* Informative Display Panel */}
+        <div
+          className="rounded-xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md max-w-md shadow-2xl"
+          style={{ borderColor: `${skills[active].color}30`, background: `${skills[active].color}04` }}
+        >
+          <div className="flex items-center gap-4 mb-3">
+            <div className="text-4xl" style={{ color: skills[active].color }}>
+              {(() => { const Icon = skills[active].icon; return <Icon />; })()}
             </div>
-            <p className="text-sm text-slate-400 leading-relaxed">{skills[active].desc}</p>
+            <div>
+              <div className="text-lg font-bold text-slate-100">{skills[active].name}</div>
+              <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mt-0.5">{skills[active].cat}</div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2 mt-4">
-            {skills.map((s, i) => (
+          <p className="text-sm text-slate-400 leading-relaxed">{skills[active].desc}</p>
+        </div>
+
+        {/* Selection Navigation Pills */}
+        <div className="flex flex-wrap gap-2 max-w-md">
+          {skills.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => handleClick(i)}
+              className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-all duration-300"
+              style={{
+                borderColor: active === i ? s.color : '#1e293b',
+                color: active === i ? s.color : '#475569',
+                background: active === i ? `${s.color}15` : 'transparent'
+              }}
+            >
+              {s.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* RIGHT CYBER WHEEL HALF: Shifted and hidden by translating X-axis off screen */}
+      <div 
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[40%] lg:translate-x-[30%] flex-shrink-0 select-none hidden md:block" 
+        style={{ width: CENTER * 2, height: CENTER * 2 }}
+      >
+        {/* Decorative Orbit rings */}
+        {[CENTER * 2 - 120, CENTER * 2 - 20, RADIUS * 2 + 20].map((size, i) => (
+          <div key={i} className="absolute rounded-full pointer-events-none"
+            style={{
+              width: size, height: size,
+              top: '50%', left: '50%',
+              transform: 'translate(-50%,-50%)',
+              border: '1px solid rgba(30,58,95,0.25)'
+            }} 
+          />
+        ))}
+
+        {/* Main Axis Rotating Ring */}
+        <div
+          className="absolute inset-0"
+          style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)', transform: `rotate(${rotation}deg)` }}
+        >
+          {skills.map((skill, i) => {
+            const angle = (i * 360) / skills.length - 90;
+            const rad = (angle * Math.PI) / 180;
+            const x = CENTER + RADIUS * Math.cos(rad);
+            const y = CENTER + RADIUS * Math.sin(rad);
+            const Icon = skill.icon;
+            const isActive = active === i;
+
+            return (
               <button
                 key={i}
                 onClick={() => handleClick(i)}
-                className="text-xs font-mono px-3 py-1 rounded-full border transition-all duration-200"
+                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl
+                  ${isActive ? 'animate-bounce-slow' : 'opacity-40 hover:opacity-90'}`}
                 style={{
-                  borderColor: active === i ? s.color : '#1e293b',
-                  color: active === i ? s.color : '#475569',
-                  background: active === i ? `${s.color}15` : 'transparent'
+                  // Active icon scales up to 76px; inactive ones sit compactly at 54px
+                  width: isActive ? 76 : 54,
+                  height: isActive ? 76 : 54,
+                  left: x,
+                  top: y,
+                  transform: `translate(-50%,-50%) rotate(${-rotation}deg)`,
+                  background: isActive ? '#0d1526' : '#060c14',
+                  border: `2px solid ${isActive ? skill.color : '#1e3a5f'}`,
+                  // Spreads a vibrant color matching neon glow underneath the peak item
+                  boxShadow: isActive ? `0 0 35px ${skill.color}50, inset 0 0 15px ${skill.color}30` : 'none',
+                  color: skill.color,
+                  fontSize: isActive ? '1.9rem' : '1.3rem',
+                  zIndex: isActive ? 30 : 10,
                 }}
               >
-                {s.name}
+                <Icon />
               </button>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
-        {/* Wheel */}
-        <div className="relative flex-shrink-0" style={{ width: CENTER * 2, height: CENTER * 2 }}>
-
-          {/* Orbit rings */}
-          {[160, 220, RADIUS * 2 + 20].map((size, i) => (
-            <div key={i} className="absolute rounded-full"
-              style={{
-                width: size, height: size,
-                top: '50%', left: '50%',
-                transform: 'translate(-50%,-50%)',
-                border: '1px solid rgba(30,58,95,0.5)'
-              }} />
-          ))}
-
-          {/* Rotating wheel */}
-          <div
-            className="absolute inset-0"
-            style={{ transition: 'transform 0.6s cubic-bezier(0.34,1.56,0.64,1)', transform: `rotate(${rotation}deg)` }}
-          >
-            {skills.map((skill, i) => {
-              const angle = (i * 360) / skills.length - 90;
-              const rad = (angle * Math.PI) / 180;
-              const x = CENTER + RADIUS * Math.cos(rad);
-              const y = CENTER + RADIUS * Math.sin(rad);
-              const Icon = skill.icon;
-              const isActive = active === i;
-
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleClick(i)}
-                  className="absolute rounded-full flex items-center justify-center transition-all duration-300"
-                  style={{
-                    width: isActive ? 80 : 56,
-                    height: isActive ? 80 : 56,
-                    left: x,
-                    top: y,
-                    transform: `translate(-50%,-50%) rotate(${-rotation}deg)`,
-                    background: isActive ? `${skill.color}20` : '#0d1526',
-                    border: `2px solid ${isActive ? skill.color : '#1e3a5f'}`,
-                    boxShadow: isActive ? `0 0 24px ${skill.color}60, 0 0 48px ${skill.color}20` : 'none',
-                    color: skill.color,
-                    fontSize: isActive ? '2rem' : '1.4rem',
-                    zIndex: isActive ? 20 : 5,
-                  }}
-                >
-                  <Icon />
-                </button>
-              );
-            })}
+        {/* Static Inner Radar Cap */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10"
+          style={{
+            width: 110, height: 110,
+            background: '#060c18',
+            border: `2px solid ${skills[active].color}40`,
+            boxShadow: `0 0 40px -10px ${skills[active].color}20`
+          }}
+        >
+          <div className="text-2xl transition-all duration-300" style={{ color: skills[active].color }}>
+            {(() => { const Icon = skills[active].icon; return <Icon />; })()}
           </div>
-
-          {/* Center glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            style={{
-              width: 120, height: 120,
-              borderRadius: '50%',
-              background: `radial-gradient(circle, ${skills[active].color}20 0%, transparent 70%)`,
-              transition: 'background 0.5s'
-            }}
-          />
-
-          {/* Center circle */}
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center gap-1 z-10 transition-all duration-500"
-            style={{
-              width: 110, height: 110,
-              background: '#060c18',
-              border: `2px solid ${skills[active].color}50`,
-            }}
-          >
-            <div className="text-3xl transition-all duration-300" style={{ color: skills[active].color }}>
-              {(() => { const Icon = skills[active].icon; return <Icon />; })()}
-            </div>
-            <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wider">
-              {skills[active].name}
-            </span>
-          </div>
+          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider mt-1">
+            {skills[active].name}
+          </span>
         </div>
       </div>
     </section>
