@@ -1,6 +1,5 @@
 import { FaJava, FaPython, FaGitAlt } from 'react-icons/fa';
-import { SiSpringboot, SiApachedatabricks, SiMysql, SiPostman } from 'react-icons/si';
-import { VscAzure } from 'react-icons/vsc';
+import { SiSpringboot, SiMicrosoftazure, SiApachedatabricks, SiMysql, SiPostman } from 'react-icons/si';
 
 export default function Skills() {
   const skillCategories = [
