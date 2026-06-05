@@ -13,8 +13,9 @@ const skills = [
   { name: 'Git', icon: FaGitAlt, color: '#f05032', cat: 'DevOps', desc: 'Version control and collaborative development across all professional and personal projects.' },
 ];
 
-const RADIUS = 240; // Increased radius to give the off-screen curve a massive, smooth layout look
-const CENTER = 300;
+const RADIUS = 260; 
+const CENTER_X = 300;
+const CENTER_Y = 320; // Pushes the center coordinate downward to anchor the track at the section footer base
 
 export default function Skills() {
   const [rotation, setRotation] = useState(0);
@@ -32,10 +33,10 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[650px] flex items-center overflow-hidden">
+    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[700px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
       
-      {/* LEFT CONTENT HALF */}
-      <div className="w-full lg:w-1/2 z-10 space-y-6">
+      {/* Left content description frame */}
+      <div className="w-full lg:w-2/5 z-10 space-y-6 self-start lg:self-center">
         <div>
           <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
           <h3 className="text-4xl font-bold text-slate-100 mt-2 mb-4 leading-tight">
@@ -43,10 +44,9 @@ export default function Skills() {
           </h3>
         </div>
 
-        {/* Informative Display Panel */}
         <div
-          className="rounded-xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md max-w-md shadow-2xl"
-          style={{ borderColor: `${skills[active].color}30`, background: `${skills[active].color}04` }}
+          className="rounded-xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md shadow-2xl"
+          style={{ borderColor: `${skills[active].color}30`, background: `${skills[active].color}02` }}
         >
           <div className="flex items-center gap-4 mb-3">
             <div className="text-4xl" style={{ color: skills[active].color }}>
@@ -60,8 +60,7 @@ export default function Skills() {
           <p className="text-sm text-slate-400 leading-relaxed">{skills[active].desc}</p>
         </div>
 
-        {/* Selection Navigation Pills */}
-        <div className="flex flex-wrap gap-2 max-w-md">
+        <div className="flex flex-wrap gap-2">
           {skills.map((s, i) => (
             <button
               key={i}
@@ -79,33 +78,38 @@ export default function Skills() {
         </div>
       </div>
 
-      {/* RIGHT CYBER WHEEL HALF: Shifted and hidden by translating X-axis off screen */}
+      {/* Right-aligned bottom arc architecture layout */}
       <div 
-        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[40%] lg:translate-x-[30%] flex-shrink-0 select-none hidden md:block" 
-        style={{ width: CENTER * 2, height: CENTER * 2 }}
+        className="relative lg:absolute right-0 bottom-0 translate-y-[20%] lg:translate-y-[15%] translate-x-[10%] lg:translate-x-0 mt-12 lg:mt-0 flex-shrink-0"
+        style={{ width: CENTER_X * 2, height: CENTER_Y }}
       >
-        {/* Decorative Orbit rings */}
-        {[CENTER * 2 - 120, CENTER * 2 - 20, RADIUS * 2 + 20].map((size, i) => (
-          <div key={i} className="absolute rounded-full pointer-events-none"
-            style={{
-              width: size, height: size,
-              top: '50%', left: '50%',
-              transform: 'translate(-50%,-50%)',
-              border: '1px solid rgba(30,58,95,0.25)'
-            }} 
-          />
-        ))}
+        {/* Background Orbit Track */}
+        <div 
+          className="absolute rounded-full border border-dashed border-slate-800/60 pointer-events-none"
+          style={{
+            width: RADIUS * 2,
+            height: RADIUS * 2,
+            left: CENTER_X - RADIUS,
+            top: CENTER_Y - RADIUS,
+          }}
+        />
 
-        {/* Main Axis Rotating Ring */}
+        {/* Rotational Mechanical Component Group */}
         <div
           className="absolute inset-0"
-          style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)', transform: `rotate(${rotation}deg)` }}
+          style={{ 
+            width: CENTER_X * 2, 
+            height: CENTER_Y * 2,
+            transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)', 
+            transform: `rotate(${rotation}deg)`,
+            transformOrigin: `${CENTER_X}px ${CENTER_Y}px`
+          }}
         >
           {skills.map((skill, i) => {
             const angle = (i * 360) / skills.length - 90;
             const rad = (angle * Math.PI) / 180;
-            const x = CENTER + RADIUS * Math.cos(rad);
-            const y = CENTER + RADIUS * Math.sin(rad);
+            const x = CENTER_X + RADIUS * Math.cos(rad);
+            const y = CENTER_Y + RADIUS * Math.sin(rad);
             const Icon = skill.icon;
             const isActive = active === i;
 
@@ -113,21 +117,19 @@ export default function Skills() {
               <button
                 key={i}
                 onClick={() => handleClick(i)}
-                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-xl
+                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl cursor-pointer
                   ${isActive ? 'animate-bounce-slow' : 'opacity-40 hover:opacity-90'}`}
                 style={{
-                  // Active icon scales up to 76px; inactive ones sit compactly at 54px
-                  width: isActive ? 76 : 54,
-                  height: isActive ? 76 : 54,
+                  width: isActive ? 74 : 52,
+                  height: isActive ? 74 : 52,
                   left: x,
                   top: y,
                   transform: `translate(-50%,-50%) rotate(${-rotation}deg)`,
                   background: isActive ? '#0d1526' : '#060c14',
                   border: `2px solid ${isActive ? skill.color : '#1e3a5f'}`,
-                  // Spreads a vibrant color matching neon glow underneath the peak item
-                  boxShadow: isActive ? `0 0 35px ${skill.color}50, inset 0 0 15px ${skill.color}30` : 'none',
+                  boxShadow: isActive ? `0 0 30px ${skill.color}40` : 'none',
                   color: skill.color,
-                  fontSize: isActive ? '1.9rem' : '1.3rem',
+                  fontSize: isActive ? '1.8rem' : '1.2rem',
                   zIndex: isActive ? 30 : 10,
                 }}
               >
@@ -137,14 +139,17 @@ export default function Skills() {
           })}
         </div>
 
-        {/* Static Inner Radar Cap */}
+        {/* Central Display Ring Node */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10"
+          className="absolute rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10 border shadow-inner"
           style={{
-            width: 110, height: 110,
+            width: 120,
+            height: 120,
+            left: CENTER_X - 60,
+            top: CENTER_Y - 60,
             background: '#060c18',
             border: `2px solid ${skills[active].color}40`,
-            boxShadow: `0 0 40px -10px ${skills[active].color}20`
+            boxShadow: `0 0 40px -10px ${skills[active].color}30`
           }}
         >
           <div className="text-2xl transition-all duration-300" style={{ color: skills[active].color }}>
