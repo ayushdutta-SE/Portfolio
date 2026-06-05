@@ -15,28 +15,34 @@ const skills = [
 
 const RADIUS = 260; 
 const CENTER_X = 300;
-const CENTER_Y = 320; // Pushes the center coordinate downward to anchor the track at the section footer base
+const CENTER_Y = 340;
 
 export default function Skills() {
   const [rotation, setRotation] = useState(0);
   const [active, setActive] = useState(0);
 
-  const handleClick = (i) => {
+  const handleNodeClick = (clickedIndex) => {
+    if (clickedIndex === active) return;
+
     const totalSkills = skills.length;
-    const targetAngle = (i * 360) / totalSkills;
-    const currentAngle = ((rotation % 360) + 360) % 360;
-    let delta = targetAngle - currentAngle;
-    if (delta > 180) delta -= 360;
-    if (delta < -180) delta += 360;
-    setRotation(prev => prev - delta);
-    setActive(i);
+    
+    // Calculate shortest distance path along a circular index array loop
+    let diff = clickedIndex - active;
+    if (diff > totalSkills / 2) diff -= totalSkills;
+    if (diff < -totalSkills / 2) diff += totalSkills;
+
+    // Convert step indices cleanly to degree steps based on the array distribution
+    const degreesPerSkill = 360 / totalSkills;
+    
+    setRotation(prev => prev - (diff * degreesPerSkill));
+    setActive(clickedIndex);
   };
 
   return (
-    <section id="skills" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[700px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
+    <section id="skills" className="pt-24 pb-0 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[580px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
       
-      {/* Left content description frame */}
-      <div className="w-full lg:w-2/5 z-10 space-y-6 self-start lg:self-center">
+      {/* LEFT CONTENT BLOCK */}
+      <div className="w-full lg:w-2/5 z-10 space-y-6 pb-12 lg:pb-0">
         <div>
           <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
           <h3 className="text-4xl font-bold text-slate-100 mt-2 mb-4 leading-tight">
@@ -44,48 +50,32 @@ export default function Skills() {
           </h3>
         </div>
 
+        {/* Dynamic Detail Card Box */}
         <div
-          className="rounded-xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md shadow-2xl"
-          style={{ borderColor: `${skills[active].color}30`, background: `${skills[active].color}02` }}
+          className="rounded-xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md max-w-md shadow-2xl"
+          style={{ borderColor: `${skills[active].color}25`, background: `${skills[active].color}02` }}
         >
           <div className="flex items-center gap-4 mb-3">
             <div className="text-4xl" style={{ color: skills[active].color }}>
               {(() => { const Icon = skills[active].icon; return <Icon />; })()}
             </div>
             <div>
-              <div className="text-lg font-bold text-slate-100">{skills[active].name}</div>
+              <div className="text-lg font-bold text-slate-100 tracking-tight">{skills[active].name}</div>
               <div className="text-xs font-mono text-slate-500 uppercase tracking-wider mt-0.5">{skills[active].cat}</div>
             </div>
           </div>
           <p className="text-sm text-slate-400 leading-relaxed">{skills[active].desc}</p>
         </div>
-
-        <div className="flex flex-wrap gap-2">
-          {skills.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => handleClick(i)}
-              className="text-xs font-mono px-3 py-1.5 rounded-lg border transition-all duration-300"
-              style={{
-                borderColor: active === i ? s.color : '#1e293b',
-                color: active === i ? s.color : '#475569',
-                background: active === i ? `${s.color}15` : 'transparent'
-              }}
-            >
-              {s.name}
-            </button>
-          ))}
-        </div>
       </div>
 
-      {/* Right-aligned bottom arc architecture layout */}
+      {/* RIGHT ARC COMPONENT */}
       <div 
-        className="relative lg:absolute right-0 bottom-0 translate-y-[20%] lg:translate-y-[15%] translate-x-[10%] lg:translate-x-0 mt-12 lg:mt-0 flex-shrink-0"
+        className="relative lg:absolute right-0 bottom-0 translate-y-[12%] lg:translate-y-[8%] translate-x-[5%] lg:translate-x-0 flex-shrink-0"
         style={{ width: CENTER_X * 2, height: CENTER_Y }}
       >
-        {/* Background Orbit Track */}
+        {/* Track Guideline */}
         <div 
-          className="absolute rounded-full border border-dashed border-slate-800/60 pointer-events-none"
+          className="absolute rounded-full border border-dashed border-slate-800/40 pointer-events-none"
           style={{
             width: RADIUS * 2,
             height: RADIUS * 2,
@@ -94,7 +84,7 @@ export default function Skills() {
           }}
         />
 
-        {/* Rotational Mechanical Component Group */}
+        {/* Core Rotator Matrix Engine */}
         <div
           className="absolute inset-0"
           style={{ 
@@ -116,18 +106,19 @@ export default function Skills() {
             return (
               <button
                 key={i}
-                onClick={() => handleClick(i)}
-                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl cursor-pointer
-                  ${isActive ? 'animate-bounce-slow' : 'opacity-40 hover:opacity-90'}`}
+                onClick={() => handleNodeClick(i)}
+                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl cursor-pointer select-none outline-none
+                  ${isActive ? 'animate-bounce-slow' : 'opacity-30 hover:opacity-80'}`}
                 style={{
                   width: isActive ? 74 : 52,
                   height: isActive ? 74 : 52,
                   left: x,
                   top: y,
+                  // Keep node text baseline parallel with user viewport perspective dynamically
                   transform: `translate(-50%,-50%) rotate(${-rotation}deg)`,
                   background: isActive ? '#0d1526' : '#060c14',
                   border: `2px solid ${isActive ? skill.color : '#1e3a5f'}`,
-                  boxShadow: isActive ? `0 0 30px ${skill.color}40` : 'none',
+                  boxShadow: isActive ? `0 0 35px ${skill.color}40, inset 0 0 15px ${skill.color}20` : 'none',
                   color: skill.color,
                   fontSize: isActive ? '1.8rem' : '1.2rem',
                   zIndex: isActive ? 30 : 10,
@@ -139,23 +130,23 @@ export default function Skills() {
           })}
         </div>
 
-        {/* Central Display Ring Node */}
+        {/* Static Central Identity Dial */}
         <div
-          className="absolute rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10 border shadow-inner"
+          className="absolute rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10 border shadow-2xl"
           style={{
             width: 120,
             height: 120,
             left: CENTER_X - 60,
             top: CENTER_Y - 60,
             background: '#060c18',
-            border: `2px solid ${skills[active].color}40`,
-            boxShadow: `0 0 40px -10px ${skills[active].color}30`
+            border: `2px solid ${skills[active].color}35`,
+            boxShadow: `0 0 50px -10px ${skills[active].color}25`
           }}
         >
           <div className="text-2xl transition-all duration-300" style={{ color: skills[active].color }}>
             {(() => { const Icon = skills[active].icon; return <Icon />; })()}
           </div>
-          <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider mt-1">
+          <span className="text-[10px] font-mono font-bold text-slate-400 tracking-wider uppercase mt-1">
             {skills[active].name}
           </span>
         </div>
