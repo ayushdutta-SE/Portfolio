@@ -1,5 +1,5 @@
 import { FaJava, FaPython, FaGitAlt } from 'react-icons/fa';
-import { SiSpringboot, SiDatabricks, SiMysql, SiPostman } from 'react-icons/si';
+import { SiSpringboot,SiMicrosoftazure, SiDatabricks, SiMysql, SiPostman } from 'react-icons/si';
 
 export default function Skills() {
   const skillCategories = [
@@ -15,7 +15,7 @@ export default function Skills() {
     {
       category: "Cloud Data Engineering",
       items: [
-        { name: "Azure Cloud", icon: <VscAzure className="text-[#0089D6]" /> },
+        { name: "Azure Cloud", icon: <SiMicrosoftazure className="text-[#0089D6]" /> },
         { name: "Databricks", icon: <SiDatabricks className="text-[#FF3621]" /> },
         { name: "Python", icon: <FaPython className="text-[#3776AB]" /> },
         { name: "Git Analytics", icon: <FaGitAlt className="text-[#F05032]" /> }

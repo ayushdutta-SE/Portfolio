@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SiApachedatabricks, SiMicrosoftazure} from 'react-icons/si';
+import { SiDatabricks, SiMicrosoftazure} from 'react-icons/si';
 import { FaServer} from 'react-icons/fa';
 
 export default function Projects() {
@@ -69,7 +69,7 @@ export default function Projects() {
             onClick={() => setActiveTab('transform')}
             className={`flex-1 min-w-[160px] py-4 px-6 text-center border-b-2 transition-all font-medium flex items-center justify-center gap-2 ${activeTab === 'transform' ? 'border-blue-500 text-blue-400 bg-[#1e293b]/20' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/10'}`}
           >
-            <SiApachedatabricks className="text-xs" /> Transform Engine
+            <SiDatabricks className="text-xs" /> Transform Engine
           </button>
           <button 
             onClick={() => setActiveTab('automate')}
