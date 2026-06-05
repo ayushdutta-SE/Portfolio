@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { SiApachedatabricks, SiMicrosoftazure, SiPostman } from 'react-icons/si';
-import { FaServer, FaDatabase, FaExchangeAlt } from 'react-icons/fa';
+import { SiApachedatabricks, SiMicrosoftazure} from 'react-icons/si';
+import { FaServer} from 'react-icons/fa';
 
 export default function Projects() {
   const [activeTab, setActiveTab] = useState('ingest');

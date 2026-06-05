@@ -9,7 +9,7 @@ export default function Hero() {
         Building robust backend systems & cloud pipelines.
       </h2>
       <p className="text-slate-400 max-w-2xl text-lg mb-8 leading-relaxed">
-        I am a Software Engineer with professional experience at Tata Consultancy Services in Java backend development[cite: 4]. I specialize in building enterprise services using <span className="text-slate-200 font-semibold">Spring Boot & RESTful APIs</span> [cite: 4], while bridging the gap into cloud ecosystems with <span className="text-slate-200 font-semibold">Azure Data Engineering</span> workflows[cite: 6].
+        I am a Software Engineer with professional experience at Tata Consultancy Services in Java backend development. I specialize in building enterprise services using <span className="text-slate-200 font-semibold">Spring Boot & RESTful APIs</span> , while bridging the gap into cloud ecosystems with <span className="text-slate-200 font-semibold">Azure Data Engineering</span> workflows.
       </p>
       <div className="flex gap-4">
         {/* Updated from a mailto link to point straight to your contact section anchor */}
