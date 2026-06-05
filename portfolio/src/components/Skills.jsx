@@ -1,5 +1,4 @@
 import { FaJava, FaPython, FaGitAlt } from 'react-icons/fa';
-// 1. Changed VscAzure to SiAzure here
 import { SiSpringboot, SiApachedatabricks, SiMysql, SiPostman } from 'react-icons/si';
 import { VscAzure } from 'react-icons/vsc';
 
@@ -17,16 +16,10 @@ export default function Skills() {
     {
       category: "Cloud Data Engineering",
       items: [
-        {
-          category: "Cloud Data Engineering",
-          items: [
-            // 2. Updated the icon component instance here
-            { name: "Azure Cloud", icon: <SiAzure className="text-[#0089D6]" /> },
-            { name: "Databricks", icon: <SiApachedatabricks className="text-[#FF3621]" /> },
-            { name: "Python", icon: <FaPython className="text-[#3776AB]" /> },
-            { name: "Git Analytics", icon: <FaGitAlt className="text-[#F05032]" /> }
-          ]
-        }
+        { name: "Azure Cloud", icon: <VscAzure className="text-[#0089D6]" /> },
+        { name: "Databricks", icon: <SiApachedatabricks className="text-[#FF3621]" /> },
+        { name: "Python", icon: <FaPython className="text-[#3776AB]" /> },
+        { name: "Git Analytics", icon: <FaGitAlt className="text-[#F05032]" /> }
       ]
     }
   ];
