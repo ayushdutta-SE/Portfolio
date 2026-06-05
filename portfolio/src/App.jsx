@@ -1,9 +1,9 @@
-// import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Skills from './components/Skills';
 import Experience from './components/Experience';
-import Projects from './components/Projects'; // <-- Import the new card track
+import Projects from './components/Projects';
+import Connect from './components/Connect'; // <-- 1. Import the Connect section
 
 function App() {
   return (
@@ -13,7 +13,8 @@ function App() {
         <Hero />
         <Skills />
         <Experience />
-        <Projects /> {/* <-- Render it here */}
+        <Projects />
+        <Connect /> {/* <-- 2. Render it here */}
       </main>
       <footer className="py-8 text-center text-xs font-mono text-slate-600 border-t border-slate-900">
         Designed & Built by Ayush Dutta • 2026

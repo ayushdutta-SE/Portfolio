@@ -10,6 +10,7 @@ export default function Navbar() {
         <a href="#about" className="hover:text-blue-400 transition-colors">About</a>
         <a href="#skills" className="hover:text-blue-400 transition-colors">Skills</a>
         <a href="#experience" className="hover:text-blue-400 transition-colors">Experience</a>
+        <a href="#connect" className="hover:text-blue-400 transition-colors">Contact</a> {/* <-- Added Link */}
       </div>
     </nav>
   );
