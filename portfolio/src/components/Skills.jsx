@@ -15,7 +15,7 @@ const skills = [
 
 const RADIUS = 260; 
 const CENTER_X = 300;
-const CENTER_Y = 340;
+const CENTER_Y = 360; // Slightly adjusted to give the floating apex room to breathe
 
 export default function Skills() {
   const [rotation, setRotation] = useState(0);
@@ -35,7 +35,7 @@ export default function Skills() {
   };
 
   return (
-    <section id="skills" className="pt-24 pb-0 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[520px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
+    <section id="skills" className="pt-24 pb-0 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[550px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
       
       {/* LEFT CONTENT BLOCK */}
       <div className="w-full lg:w-2/5 z-10 self-start lg:self-center pb-8 lg:pb-0">
@@ -47,12 +47,12 @@ export default function Skills() {
 
       {/* RIGHT CYBER ARC ROTATOR */}
       <div 
-        className="relative lg:absolute right-0 bottom-0 translate-y-[12%] lg:translate-y-[8%] translate-x-[5%] lg:translate-x-0 flex-shrink-0"
+        className="relative lg:absolute right-0 bottom-0 translate-y-[10%] lg:translate-y-[5%] translate-x-[5%] lg:translate-x-0 flex-shrink-0"
         style={{ width: CENTER_X * 2, height: CENTER_Y }}
       >
         {/* Track Guideline */}
         <div 
-          className="absolute rounded-full border border-dashed border-slate-800/30 pointer-events-none"
+          className="absolute rounded-full border border-dashed border-slate-800/20 pointer-events-none"
           style={{
             width: RADIUS * 2,
             height: RADIUS * 2,
@@ -73,7 +73,6 @@ export default function Skills() {
           }}
         >
           {skills.map((skill, i) => {
-            // Calculate base circular coordinates
             const angle = (i * 360) / skills.length - 90;
             const rad = (angle * Math.PI) / 180;
             const x = CENTER_X + RADIUS * Math.cos(rad);
@@ -92,48 +91,58 @@ export default function Skills() {
                   zIndex: isActive ? 40 : 10
                 }}
               >
-                {/* When active, this container transforms into a unified single 
-                  circle block containing both the scaled icon AND the color-matched text name 
+                {/* Circular node element housing only the logo icon.
+                  Inactive items have NO borders or background boxes—just raw floating logos.
                 */}
                 <button
                   onClick={() => handleNodeClick(i)}
-                  className={`flex flex-col items-center justify-center transition-all duration-500 rounded-full outline-none select-none
+                  className={`flex items-center justify-center transition-all duration-500 rounded-full outline-none select-none
                     ${isActive 
-                      ? 'w-[130px] h-[130px] bg-[#060c18] border-2 shadow-2xl animate-bounce-slow' 
-                      : 'w-14 h-14 bg-[#060c14] border border-slate-800 opacity-30 hover:opacity-80'
+                      ? 'w-20 h-20 bg-[#060c18] border-2 shadow-2xl animate-bounce-slow' 
+                      : 'w-12 h-12 bg-transparent border-transparent opacity-30 hover:opacity-80'
                     }`}
                   style={{
-                    borderColor: isActive ? skill.color : '#1e3a5f',
-                    // Keep item elements upright regardless of the parent track's degree rotation orientation
+                    borderColor: isActive ? skill.color : 'transparent',
                     transform: `rotate(${-rotation}deg)`,
-                    boxShadow: isActive ? `0 0 50px -10px ${skill.color}40, inset 0 0 20px ${skill.color}15` : 'none'
+                    boxShadow: isActive ? `0 0 40px ${skill.color}60, inset 0 0 15px ${skill.color}30` : 'none'
                   }}
                 >
-                  {/* Icon Sizing Engine */}
                   <div 
                     className="transition-all duration-300"
                     style={{ 
                       color: skill.color,
-                      fontSize: isActive ? '2.4rem' : '1.3rem'
+                      fontSize: isActive ? '2.5rem' : '1.6rem'
                     }}
                   >
                     <Icon />
                   </div>
-
-                  {/* Active Name Element - Appears directly underneath inside the bubble */}
-                  {isActive && (
-                    <span 
-                      className="text-[11px] font-mono font-bold tracking-wider uppercase mt-1.5 animate-fadeIn"
-                      style={{ color: skill.color }}
-                    >
-                      {skill.name}
-                    </span>
-                  )}
                 </button>
               </div>
             );
           })}
         </div>
+
+        {/* STATIC APEX LABEL ENGINE:
+          Positions the active text name cleanly and externally *below* the peak active circle.
+          Since the active node always locks at the top center of the wheel arc, 
+          this container dynamically mirrors the color and value perfectly with zero jumpiness.
+        */}
+        <div 
+          className="absolute flex flex-col items-center justify-center pointer-events-none z-50 text-center transition-all duration-500"
+          style={{
+            left: CENTER_X,
+            top: (CENTER_Y - RADIUS) + 65, // Placed exactly below the active peak circle's footprint
+            transform: 'translateX(-50%)'
+          }}
+        >
+          <span 
+            className="text-2xl font-bold tracking-wide uppercase transition-all duration-500 drop-shadow-md font-sans"
+            style={{ color: skills[active].color }}
+          >
+            {skills[active].name}
+          </span>
+        </div>
+
       </div>
     </section>
   );
