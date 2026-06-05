@@ -25,22 +25,19 @@ export default function Skills() {
     if (clickedIndex === active) return;
 
     const totalSkills = skills.length;
-    
-    // Smooth modular shortest-path step calculation
     let diff = clickedIndex - active;
     if (diff > totalSkills / 2) diff -= totalSkills;
     if (diff < -totalSkills / 2) diff += totalSkills;
 
     const degreesPerSkill = 360 / totalSkills;
-    
     setRotation(prev => prev - (diff * degreesPerSkill));
     setActive(clickedIndex);
   };
 
   return (
-    <section id="skills" className="pt-24 pb-0 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[500px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
+    <section id="skills" className="pt-24 pb-0 px-6 max-w-5xl mx-auto border-t border-slate-800/60 relative min-h-[520px] flex flex-col lg:flex-row items-center justify-between overflow-hidden">
       
-      {/* LEFT CONTENT BLOCK: Cleaned out entirely except for the stark main heading */}
+      {/* LEFT CONTENT BLOCK */}
       <div className="w-full lg:w-2/5 z-10 self-start lg:self-center pb-8 lg:pb-0">
         <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
         <h3 className="text-4xl font-bold text-slate-100 mt-2 leading-tight">
@@ -48,14 +45,14 @@ export default function Skills() {
         </h3>
       </div>
 
-      {/* RIGHT ARC RADAR FRAME: Embedded with central metadata label */}
+      {/* RIGHT CYBER ARC ROTATOR */}
       <div 
         className="relative lg:absolute right-0 bottom-0 translate-y-[12%] lg:translate-y-[8%] translate-x-[5%] lg:translate-x-0 flex-shrink-0"
         style={{ width: CENTER_X * 2, height: CENTER_Y }}
       >
-        {/* Orbit Path Guideline */}
+        {/* Track Guideline */}
         <div 
-          className="absolute rounded-full border border-dashed border-slate-800/40 pointer-events-none"
+          className="absolute rounded-full border border-dashed border-slate-800/30 pointer-events-none"
           style={{
             width: RADIUS * 2,
             height: RADIUS * 2,
@@ -64,7 +61,7 @@ export default function Skills() {
           }}
         />
 
-        {/* Dynamic Rotation Axis Core */}
+        {/* Dynamic Rotation Layer */}
         <div
           className="absolute inset-0"
           style={{ 
@@ -76,6 +73,7 @@ export default function Skills() {
           }}
         >
           {skills.map((skill, i) => {
+            // Calculate base circular coordinates
             const angle = (i * 360) / skills.length - 90;
             const rad = (angle * Math.PI) / 180;
             const x = CENTER_X + RADIUS * Math.cos(rad);
@@ -84,53 +82,57 @@ export default function Skills() {
             const isActive = active === i;
 
             return (
-              <button
+              <div
                 key={i}
-                onClick={() => handleNodeClick(i)}
-                className={`absolute rounded-2xl flex items-center justify-center transition-all duration-500 shadow-2xl cursor-pointer select-none outline-none
-                  ${isActive ? 'animate-bounce-slow' : 'opacity-30 hover:opacity-80'}`}
+                className="absolute"
                 style={{
-                  width: isActive ? 74 : 52,
-                  height: isActive ? 74 : 52,
                   left: x,
                   top: y,
-                  transform: `translate(-50%,-50%) rotate(${-rotation}deg)`,
-                  background: isActive ? '#0d1526' : '#060c14',
-                  border: `2px solid ${isActive ? skill.color : '#1e3a5f'}`,
-                  boxShadow: isActive ? `0 0 35px ${skill.color}40, inset 0 0 15px ${skill.color}20` : 'none',
-                  color: skill.color,
-                  fontSize: isActive ? '1.8rem' : '1.2rem',
-                  zIndex: isActive ? 30 : 10,
+                  transform: 'translate(-50%, -50%)',
+                  zIndex: isActive ? 40 : 10
                 }}
               >
-                <Icon />
-              </button>
+                {/* When active, this container transforms into a unified single 
+                  circle block containing both the scaled icon AND the color-matched text name 
+                */}
+                <button
+                  onClick={() => handleNodeClick(i)}
+                  className={`flex flex-col items-center justify-center transition-all duration-500 rounded-full outline-none select-none
+                    ${isActive 
+                      ? 'w-[130px] h-[130px] bg-[#060c18] border-2 shadow-2xl animate-bounce-slow' 
+                      : 'w-14 h-14 bg-[#060c14] border border-slate-800 opacity-30 hover:opacity-80'
+                    }`}
+                  style={{
+                    borderColor: isActive ? skill.color : '#1e3a5f',
+                    // Keep item elements upright regardless of the parent track's degree rotation orientation
+                    transform: `rotate(${-rotation}deg)`,
+                    boxShadow: isActive ? `0 0 50px -10px ${skill.color}40, inset 0 0 20px ${skill.color}15` : 'none'
+                  }}
+                >
+                  {/* Icon Sizing Engine */}
+                  <div 
+                    className="transition-all duration-300"
+                    style={{ 
+                      color: skill.color,
+                      fontSize: isActive ? '2.4rem' : '1.3rem'
+                    }}
+                  >
+                    <Icon />
+                  </div>
+
+                  {/* Active Name Element - Appears directly underneath inside the bubble */}
+                  {isActive && (
+                    <span 
+                      className="text-[11px] font-mono font-bold tracking-wider uppercase mt-1.5 animate-fadeIn"
+                      style={{ color: skill.color }}
+                    >
+                      {skill.name}
+                    </span>
+                  )}
+                </button>
+              </div>
             );
           })}
-        </div>
-
-        {/* STATIC CENTRAL DISPLAY DIAL: Serves as the dynamic label engine for the active name */}
-        <div
-          className="absolute rounded-full flex flex-col items-center justify-center transition-all duration-500 z-10 border shadow-2xl"
-          style={{
-            width: 130,
-            height: 130,
-            left: CENTER_X - 65,
-            top: CENTER_Y - 65,
-            background: '#060c18',
-            border: `2px solid ${skills[active].color}35`,
-            boxShadow: `0 0 50px -10px ${skills[active].color}25`
-          }}
-        >
-          {/* Active Skill Icon Display */}
-          <div className="text-3xl transition-all duration-300" style={{ color: skills[active].color }}>
-            {(() => { const Icon = skills[active].icon; return <Icon />; })()}
-          </div>
-          
-          {/* Dynamic Core Label: Shifted cleanly right beneath the icon inside the circle */}
-          <span className="text-xs font-mono font-bold text-slate-200 tracking-wider uppercase mt-1.5 transition-all duration-300">
-            {skills[active].name}
-          </span>
         </div>
       </div>
     </section>
