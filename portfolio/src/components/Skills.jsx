@@ -16,12 +16,13 @@ const skills = [
 const TOTAL = skills.length;
 const CX = 500;
 const CY = 500;
-const INNER = 160;
-const OUTER = 340;
+const BASE_INNER = 160;
+const BASE_OUTER = 320;
 const GAP_DEG = 2;
 
 function polarToCart(cx, cy, r, angleDeg) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
+  // Adjusted by 180 degrees to naturally orient the semi-circle arc to face the left wall
+  const rad = ((angleDeg - 180) * Math.PI) / 180;
   return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
 }
 
@@ -42,184 +43,174 @@ export default function Skills() {
   const segDeg = (arcDeg / TOTAL);
 
   const handleClick = (i) => {
-    if (i === active) return;
-
-    // 1. Structural Shortest Path circular looping logic
-    let diff = i - active;
-    if (diff > TOTAL / 2) diff -= TOTAL;
-    if (diff < -TOTAL / 2) diff += TOTAL;
-
-    // 2. Continuous smooth rotational stepping
-    setRotation(prev => prev - (diff * segDeg));
+    const targetOffset = (TOTAL / 2 - 0.5 - i) * segDeg;
+    const currentNorm = ((rotation % 360) + 360) % 360;
+    let delta = targetOffset - currentNorm;
+    if (delta > 180) delta -= 360;
+    if (delta < -180) delta += 360;
+    setRotation(prev => prev + delta);
     setActive(i);
   };
 
+  const ActiveIcon = skills[active].icon;
+
   return (
-    <section id="skills" className="pt-24 pb-0 px-6 max-w-6xl mx-auto border-t border-slate-800/60 overflow-hidden">
-      <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
-      <h3 className="text-4xl font-bold text-slate-100 mt-1 mb-0 leading-tight">
-        My <span className="text-blue-400">Skills</span>
-      </h3>
+    <section id="skills" className="py-24 px-6 max-w-6xl mx-auto border-t border-slate-800/60 relative min-h-[600px] flex items-center overflow-hidden">
+      
+      {/* Left Text Dashboard Context Panel */}
+      <div className="w-full lg:w-2/5 z-20 space-y-6">
+        <div>
+          <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">01. Core Capabilities</span>
+          <h3 className="text-4xl font-bold text-slate-100 mt-1 mb-0 leading-tight">
+            My <span className="text-blue-400">Skills</span>
+          </h3>
+        </div>
 
-      <div className="relative flex items-end justify-end" style={{ height: 500 }}>
-
-        {/* SVG Wheel — Anchored flush at the bottom-right layout frame boundary */}
         <div
-          className="absolute"
-          style={{ right: -180, bottom: -120 }}
+          className="rounded-2xl p-6 border transition-all duration-500 bg-[#0d1526]/40 backdrop-blur-md shadow-2xl"
+          style={{
+            borderColor: `${skills[active].color}30`,
+            background: `${skills[active].color}02`
+          }}
         >
-          <svg width="1000" height="620" viewBox="0 0 1000 620" style={{ overflow: 'visible' }}>
-            <defs>
-              {skills.map((s, i) => (
-                <radialGradient key={i} id={`grad${i}`} cx="50%" cy="50%" r="50%">
-                  <stop offset="0%" stopColor={s.color} stopOpacity="0.2" />
-                  <stop offset="100%" stopColor={s.color} stopOpacity="0.02" />
-                </radialGradient>
-              ))}
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="5" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-              <filter id="glow-strong">
-                <feGaussianBlur stdDeviation="14" result="coloredBlur" />
-                <feMerge>
-                  <feMergeNode in="coloredBlur" />
-                  <feMergeNode in="SourceGraphic" />
-                </feMerge>
-              </filter>
-            </defs>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="text-4xl" style={{ color: skills[active].color }}>
+              <ActiveIcon />
+            </div>
+            <div>
+              <div className="text-lg font-bold text-slate-100 leading-tight">{skills[active].name}</div>
+              <div className="text-[10px] font-mono text-slate-500 uppercase tracking-widest mt-0.5">{skills[active].cat}</div>
+            </div>
+          </div>
+          <p className="text-sm text-slate-400 leading-relaxed">{skills[active].desc}</p>
+        </div>
+      </div>
 
-            {/* Rotating Core Rail Container */}
-            <g transform={`rotate(${rotation}, ${CX}, ${CY})`} style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)' }}>
-              {skills.map((skill, i) => {
-                const startDeg = i * segDeg + GAP_DEG / 2;
-                const endDeg = (i + 1) * segDeg - GAP_DEG / 2;
-                const midDeg = (startDeg + endDeg) / 2;
-                const isActive = active === i;
-                const iconPos = polarToCart(CX, CY, (INNER + OUTER) / 2, midDeg);
-                const Icon = skill.icon;
+      {/* RIGHT WALL ANCHOR CONTAINER: Pinned flush against the screen boundary wall */}
+      <div
+        className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-[45%] lg:translate-x-[30%] select-none z-10"
+        style={{ width: 1000, height: 620 }}
+      >
+        <svg width="1000" height="620" viewBox="0 0 1000 620" style={{ overflow: 'visible' }}>
+          <defs>
+            {skills.map((s, i) => (
+              <radialGradient key={i} id={`grad${i}`} cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor={s.color} stopOpacity="0.25" />
+                <stop offset="100%" stopColor={s.color} stopOpacity="0.03" />
+              </radialGradient>
+            ))}
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="6" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="glow-strong">
+              <feGaussianBlur stdDeviation="15" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-                return (
-                  <g key={i} onClick={() => handleClick(i)} className="outline-none select-none" style={{ cursor: 'pointer' }}>
-                    {/* SVG Console Arc Segment Path Track */}
-                    <path
-                      d={segmentPath(CX, CY, INNER, OUTER, startDeg, endDeg)}
-                      fill={isActive ? `url(#grad${i})` : 'rgba(10,17,32,0.4)'}
-                      stroke={isActive ? skill.color : 'rgba(30,58,95,0.25)'}
-                      strokeWidth={isActive ? 1.5 : 0.8}
-                      filter={isActive ? 'url(#glow)' : 'none'}
-                      style={{ transition: 'fill 0.4s, stroke 0.4s' }}
-                    />
-
-                    {/* Node Icon Component: Safely counter-rotated to preserve vertical orientation */}
-                    <g 
-                      transform={`rotate(${-rotation}, ${iconPos.x}, ${iconPos.y})`}
-                      style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)' }}
-                    >
-                      <foreignObject
-                        x={iconPos.x - 20}
-                        y={iconPos.y - 20}
-                        width="40"
-                        height="40"
-                        style={{ overflow: 'visible' }}
-                      >
-                        <div style={{
-                          width: 40,
-                          height: 40,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '1.6rem',
-                          color: skill.color,
-                          // Fades track icon to 0 when active to let the clean static glowing bubble handle presentation
-                          opacity: isActive ? 0 : 0.35,
-                          transition: 'opacity 0.3s'
-                        }}>
-                          <Icon />
-                        </div>
-                      </foreignObject>
-                    </g>
-                  </g>
-                );
-              })}
-
-              {/* Concentric Accent Orbit Lines */}
-              <circle cx={CX} cy={CY} r={INNER - 12} fill="none" stroke="rgba(30,58,95,0.15)" strokeWidth="1" strokeDasharray="4 4" />
-              <circle cx={CX} cy={CY} r={OUTER + 16} fill="none" stroke="rgba(30,58,95,0.15)" strokeWidth="1" />
-            </g>
-
-            {/* UNIFIED STATIC APEX HUB: Latches right at the 0° crest. 
-                Contains the brand logo inside a glowing ring and positions the 
-                matching text directly underneath it, keeping the left column completely clean.
-            */}
-            {(() => {
-              const topPos = polarToCart(CX, CY, (INNER + OUTER) / 2, 0);
-              const AIcon = skills[active].icon;
-              const currentBrandColor = skills[active].color;
+          {/* Rotating Axis Wheel */}
+          <g transform={`rotate(${rotation}, ${CX}, ${CY})`} style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)' }}>
+            {skills.map((skill, i) => {
+              const startDeg = i * segDeg + GAP_DEG / 2;
+              const endDeg = (i + 1) * segDeg - GAP_DEG / 2;
+              const midDeg = (startDeg + endDeg) / 2;
+              const isActive = active === i;
+              
+              // 1. Dynamic Radius Inflation: Active segment expands to swallow the elements safely
+              const currentInner = isActive ? BASE_INNER - 35 : BASE_INNER;
+              const currentOuter = isActive ? BASE_OUTER + 55 : BASE_OUTER;
+              
+              const iconPos = polarToCart(CX, CY, (currentInner + currentOuter) / 2, midDeg);
+              const Icon = skill.icon;
 
               return (
-                <g>
-                  {/* Glowing Core Active Bubble */}
-                  <g filter="url(#glow-strong)">
-                    <circle
-                      cx={topPos.x}
-                      cy={topPos.y}
-                      r="46"
-                      fill="#060c18"
-                      stroke={currentBrandColor}
-                      strokeWidth="2"
-                    />
-                    <circle
-                      cx={topPos.x}
-                      cy={topPos.y}
-                      r="54"
-                      fill="none"
-                      stroke={`${currentBrandColor}30`}
-                      strokeWidth="1"
-                    />
-                    <foreignObject x={topPos.x - 22} y={topPos.y - 22} width="44" height="44">
+                <g key={i} onClick={() => handleClick(i)} style={{ cursor: 'pointer' }}>
+                  {/* Expanded Quadrilateral Path Segment */}
+                  <path
+                    d={segmentPath(CX, CY, currentInner, currentOuter, startDeg, endDeg)}
+                    fill={isActive ? `url(#grad${i})` : 'rgba(11,19,36,0.5)'}
+                    stroke={isActive ? skill.color : 'rgba(30,58,95,0.3)'}
+                    strokeWidth={isActive ? 2 : 0.8}
+                    filter={isActive ? 'url(#glow)' : 'none'}
+                    style={{ transition: 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)' }}
+                  />
+
+                  {/* Counter-Rotated Node Icons */}
+                  <g 
+                    transform={`rotate(${-rotation}, ${iconPos.x}, ${iconPos.y})`}
+                    style={{ transition: 'transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)' }}
+                  >
+                    <foreignObject
+                      x={iconPos.x - 22}
+                      y={iconPos.y - 28} // Shifted slightly upward to balance text addition below
+                      width="44"
+                      height="44"
+                      style={{ overflow: 'visible' }}
+                    >
                       <div style={{
-                        width: 44,
-                        height: 44,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '2.2rem',
-                        color: currentBrandColor,
+                        width: 44, height: 44,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: isActive ? '2.1rem' : '1.4rem',
+                        color: skill.color,
+                        filter: isActive ? `drop-shadow(0 0 12px ${skill.color})` : 'none',
+                        transition: 'all 0.4s'
                       }}>
-                        <AIcon />
+                        <Icon />
                       </div>
                     </foreignObject>
-                  </g>
 
-                  {/* Sketch-Accurate Alignment Label Node: Anchored directly below the halo */}
-                  <g>
-                    <text
-                      x={topPos.x}
-                      y={topPos.y + 85}
-                      textAnchor="middle"
-                      fill={currentBrandColor}
-                      fontSize="22"
-                      fontFamily="ui-sans-serif, system-ui, sans-serif"
-                      fontWeight="800"
-                      letterSpacing="3"
-                      style={{ 
-                        textTransform: 'uppercase',
-                        filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))',
-                        transition: 'fill 0.5s ease-in-out'
-                      }}
-                    >
-                      {skills[active].name}
-                    </text>
+                    {/* Skill Text Label: Fits cleanly inside the active enlarged segment */}
+                    {isActive && (
+                      <text
+                        x={iconPos.x}
+                        y={iconPos.y + 32}
+                        textAnchor="middle"
+                        fill={skill.color}
+                        fontSize="12"
+                        fontFamily="monospace"
+                        fontWeight="800"
+                        letterSpacing="2"
+                        style={{ textTransform: 'uppercase', filter: `drop-shadow(0 0 8px ${skill.color}40)` }}
+                      >
+                        {skill.name}
+                      </text>
+                    )}
                   </g>
                 </g>
               );
-            })()}
-          </svg>
-        </div>
+            })}
+
+            {/* Concentric Guide Vectors */}
+            <circle cx={CX} cy={CY} r={BASE_INNER - 12} fill="none" stroke="rgba(30,58,95,0.15)" strokeWidth="1" strokeDasharray="4 4" />
+            <circle cx={CX} cy={CY} r={BASE_OUTER + 16} fill="none" stroke="rgba(30,58,95,0.15)" strokeWidth="1" />
+          </g>
+
+          {/* BACKGROUND GLOW HALO DESIGN (Stays fixed at the center-left apex pointing forward) */}
+          {(() => {
+            const topPos = polarToCart(CX, CY, (BASE_INNER + BASE_OUTER) / 2 + 10, 90);
+            return (
+              <g filter="url(#glow-strong)" className="pointer-events-none">
+                <circle
+                  cx={topPos.x}
+                  cy={topPos.y}
+                  r="62"
+                  fill={`${skills[active].color}05`}
+                  stroke={skills[active].color}
+                  strokeWidth="1.5"
+                  strokeDasharray="5 3"
+                  className="opacity-40"
+                />
+              </g>
+            );
+          })()}
+        </svg>
       </div>
     </section>
   );
