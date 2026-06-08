@@ -3,7 +3,7 @@ export default function Connect() {
     { label: 'email', value: 'ayush.dutta.cloud@gmail.com', href: 'mailto:ayush.dutta.cloud@gmail.com', color: '#6366f1', icon: '📧' },
     { label: 'linkedin', value: 'linkedin.com/in/ayushdutta-se', href: 'https://www.linkedin.com/in/ayushdutta-se/', color: '#22d3ee', icon: '💼' },
     { label: 'phone', value: '+91 83402 99489', href: 'tel:+918340299489', color: '#10b981', icon: '📱' },
-    { label: 'location', value: 'Jamshedpur, Jharkhand, India', href: null, color: '#fbbf24', icon: '📍' },
+    { label: 'location', value: 'Dhanbad, Jharkhand, India', href: null, color: '#fbbf24', icon: '📍' },
   ];
 
   return (
