@@ -1,107 +1,211 @@
 import { useState } from 'react';
-import { SiDatabricks, SiMicrosoftazure} from 'react-icons/si';
-import { FaServer} from 'react-icons/fa';
+import { SiSpringboot, SiMicrosoftazure, SiDatabricks, SiApachekafka, SiRedis, SiPostgresql } from 'react-icons/si';
+
+const projects = [
+  {
+    title: 'High-Throughput Financial Transaction Broker',
+    category: 'Backend Architecture',
+    status: 'PRODUCTION CORE',
+    statusColor: '#22c55e',
+    tech: [
+      { name: 'Spring Boot', icon: SiSpringboot, color: '#22c55e' },
+      { name: 'Apache Kafka', icon: SiApachekafka, color: '#ef4444' },
+      { name: 'Redis', icon: SiRedis, color: '#d946ef' },
+      { name: 'PostgreSQL', icon: SiPostgresql, color: '#3382f6' },
+    ],
+    metrics: [{ label: 'THROUGHPUT', value: '45K TPS' }, { label: 'P99 LATENCY', value: '12ms' }, { label: 'CACHE HIT', value: '94.2%' }],
+    summary: 'Event-driven transaction broker handling thousands of messages per second. Implemented reliable transactional outbox pattern with Kafka and dual-layer Redis pooling protecting multi-sharded relational databases.',
+    arch: [
+      'Optimized entity state serialization, reducing raw memory payload by 42%.',
+      'Configured distributed Kafka partitions for strict in-order sequence execution.',
+      'Engineered fallback circuits to handle edge-case spikes without DB drops.',
+    ],
+  },
+  {
+    title: 'Enterprise On-Premises → Azure Migration Pipeline',
+    category: 'Cloud Data Engineering',
+    status: 'MIGRATION COMPLETE',
+    statusColor: '#0ea5e9',
+    tech: [
+      { name: 'Azure Data Factory', icon: SiMicrosoftazure, color: '#0ea5e9' },
+      { name: 'Databricks', icon: SiDatabricks, color: '#ef4444' },
+      { name: 'ADLS Gen2', icon: SiMicrosoftazure, color: '#38bdf8' },
+    ],
+    metrics: [{ label: 'VOLUME MOVED', value: '14.2 TB' }, { label: 'CLUSTERS', value: '32 Nodes' }, { label: 'SUCCESS RATE', value: '99.98%' }],
+    summary: 'End-to-end migration from legacy SQL Server to Azure Data Lake. Converted Informatica mappings into optimized PySpark jobs running on auto-scaling Databricks clusters with zero data loss.',
+    arch: [
+      'Configured SHIR with TLS 1.2 encryption for secure hybrid connectivity.',
+      'Implemented pre-ingestion schema validation, halting faulty data before processing.',
+      'Optimized ADLS Gen2 partition strategies, slashing analytics scan costs by 35%.',
+    ],
+  },
+  {
+    title: 'Real-Time Telemetry & Metric Aggregation Engine',
+    category: 'Data Infrastructure',
+    status: 'STABLE TELEMETRY',
+    statusColor: '#a855f7',
+    tech: [
+      { name: 'Java Core', icon: SiSpringboot, color: '#f59e0b' },
+      { name: 'Azure Synapse', icon: SiMicrosoftazure, color: '#0ea5e9' },
+      { name: 'Kafka Pipelines', icon: SiApachekafka, color: '#ef4444' },
+    ],
+    metrics: [{ label: 'INGEST RATE', value: '1.2M/s' }, { label: 'COMPRESSION', value: '4.8x GZIP' }, { label: 'ANALYTICS DELAY', value: '< 1.5s' }],
+    summary: 'Persistent system metrics framework collecting raw telemetry, applying windowed aggregations via memory pipelines, and pushing batched structures into Synapse Analytics for near real-time dashboards.',
+    arch: [
+      'Custom thread-pool allocation matrix using Java concurrency abstractions.',
+      'Batch-flushing algorithms significantly cutting downstream I/O overhead.',
+      'Health checkpoints alerting instantly when processing thresholds are breached.',
+    ],
+  },
+];
 
 export default function Projects() {
-  const [activeTab, setActiveTab] = useState('ingest');
-
-  const pipelineStages = {
-    ingest: {
-      title: "Data Ingestion & Secure Hybrid Connectivity",
-      subtitle: "Stage 01 // Secure Extraction",
-      tech: ["Azure Data Factory", "Self-Hosted Integration Runtime (SHIR)", "SQL Server"],
-      details: "Engineered secure data extraction from legacy on-premises SQL Server instances into cloud native storage. Deployed and configured a Self-Hosted Integration Runtime (SHIR) inside a private network to guarantee high-integrity, zero-data-loss transit while bypassing public internet exposures.",
-      telemetry: { throughput: "High Bandwidth", security: "TLS 1.2 / SHIR Encrypted", validation: "Pre-ingestion Schema Check" }
-    },
-    transform: {
-      title: "Scalable Transformation & Data Cleansing",
-      subtitle: "Stage 02 // PySpark Compute Engine",
-      tech: ["Azure Databricks", "Delta Lake", "PySpark", "Informatica Parity"],
-      details: "Re-engineered complex business legacy rules from Informatica PowerCenter into distributed PySpark scripts within Azure Databricks. Built metadata-driven validation tracks that execute type checking, schema enforcement, and null-value cleansing across target datasets prior to lake production loads.",
-      telemetry: { processingTime: "Distributed Cluster Scaling", integrity: "100% Schema Match", engine: "Apache Spark Optimization" }
-    },
-    automate: {
-      title: "Orchestration & Operational Telemetry",
-      subtitle: "Stage 03 // Automation & Alerting",
-      tech: ["ADF Triggers", "Azure Key Vault", "Azure Logic Apps", "Stored Procedures"],
-      details: "Designed modular, parameter-driven runtime orchestration utilizing complex SQL stored procedures to handle processing loops automatically. Integrated Azure Key Vault for seamless, zero-string security credential management and wired automated failure reporting via custom Azure Logic Apps webhooks.",
-      telemetry: { status: "Automated / Trigger-Based", alerting: "Real-time Logic Apps UI", secrets: "Vault Masked" }
-    }
-  };
-
-  const currentStage = pipelineStages[activeTab];
+  const [active, setActive] = useState(0);
+  const proj = projects[active];
 
   return (
-    <section id="projects" className="py-24 px-6 max-w-5xl mx-auto border-t border-slate-800/60">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-4">
-        <div>
-          <h3 className="text-3xl font-bold text-slate-200 flex items-center gap-3">
-            <span className="text-blue-400 font-mono text-xl">03.</span> Core Engineering Projects
-          </h3>
-          <p className="text-slate-500 text-sm mt-2">Interactive system deep-dive of production implementations.</p>
-        </div>
-        
-        {/* Production Metrics Widget */}
-        <div className="bg-[#1e293b]/50 border border-slate-800 rounded-lg p-3 font-mono text-xs text-slate-400 flex gap-4 shadow-inner">
-          <div><span className="text-green-400">●</span> PIPELINE STATUS: <span className="text-slate-200 font-semibold">ACTIVE</span></div>
-          <div className="border-l border-slate-800 pl-4">DATA LOSS: <span className="text-slate-200 font-semibold">0.00%</span></div>
-        </div>
-      </div>
-
-      {/* Main Project Card Frame */}
-      <div className="bg-[#1e293b]/30 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl backdrop-blur-sm">
-        <div className="p-6 md:p-8 border-b border-slate-800/80 bg-[#1e293b]/10">
-          <span className="text-xs font-mono text-blue-400 uppercase tracking-widest">Featured Cloud Infrastructure Architecture</span>
-          <h4 className="text-2xl font-bold text-slate-100 mt-1">
-            End-to-End On-Premises to Azure Cloud Migration Pipeline
-          </h4>
-        </div>
-
-        {/* Dynamic Navigation Tabs */}
-        <div className="flex border-b border-slate-800 bg-[#0f172a]/40 text-sm font-mono overflow-x-auto scrollbar-none">
-          <button 
-            onClick={() => setActiveTab('ingest')}
-            className={`flex-1 min-w-[160px] py-4 px-6 text-center border-b-2 transition-all font-medium flex items-center justify-center gap-2 ${activeTab === 'ingest' ? 'border-blue-500 text-blue-400 bg-[#1e293b]/20' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/10'}`}
-          >
-            <FaServer className="text-xs" /> Ingestion Layer
-          </button>
-          <button 
-            onClick={() => setActiveTab('transform')}
-            className={`flex-1 min-w-[160px] py-4 px-6 text-center border-b-2 transition-all font-medium flex items-center justify-center gap-2 ${activeTab === 'transform' ? 'border-blue-500 text-blue-400 bg-[#1e293b]/20' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/10'}`}
-          >
-            <SiDatabricks className="text-xs" /> Transform Engine
-          </button>
-          <button 
-            onClick={() => setActiveTab('automate')}
-            className={`flex-1 min-w-[160px] py-4 px-6 text-center border-b-2 transition-all font-medium flex items-center justify-center gap-2 ${activeTab === 'automate' ? 'border-blue-500 text-blue-400 bg-[#1e293b]/20' : 'border-transparent text-slate-400 hover:text-slate-200 hover:bg-[#1e293b]/10'}`}
-          >
-            <SiMicrosoftazure className="text-xs" /> Automation Hub
-          </button>
+    <section id="projects" style={{ padding: '6rem 1.5rem', position: 'relative' }}>
+      <div className="max-w-7xl mx-auto">
+        <div style={{ marginBottom: '4rem' }}>
+          <div style={{
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.72rem', color: '#22d3ee',
+            letterSpacing: '0.12em', textTransform: 'uppercase',
+            marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem'
+          }}>
+            <span style={{ color: '#475569' }}>{"//"}</span> work
+          </div>
+          <h2 style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 'clamp(1.8rem, 3vw, 2.8rem)',
+            fontWeight: 700, letterSpacing: '-0.02em', color: '#f1f5f9'
+          }}>
+            Things I{"'"}ve{' '}
+            <span style={{
+              background: 'linear-gradient(135deg, #6366f1, #22d3ee)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
+            }}>actually built</span>
+          </h2>
         </div>
 
-        {/* Dynamic Display Board */}
-        <div className="p-6 md:p-8 transition-all duration-300">
-          <span className="text-xs font-mono text-slate-500 uppercase tracking-wider">{currentStage.subtitle}</span>
-          <h5 className="text-xl font-bold text-slate-200 mt-1 mb-4">{currentStage.title}</h5>
-          <p className="text-slate-400 text-sm leading-relaxed mb-6">{currentStage.details}</p>
-
-          {/* Micro Telemetry Panel */}
-          <div className="bg-[#0f172a]/60 border border-slate-800/80 rounded-xl p-4 mb-6 grid sm:grid-cols-3 gap-4">
-            {Object.entries(currentStage.telemetry).map(([key, value]) => (
-              <div key={key} className="font-mono">
-                <div className="text-[10px] text-slate-500 uppercase tracking-wider">{key}</div>
-                <div className="text-xs text-slate-300 font-semibold mt-0.5">{value}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.5rem', alignItems: 'start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {projects.map((p, i) => (
+              <div key={i} onClick={() => setActive(i)} style={{
+                padding: '1.25rem',
+                background: active === i ? 'rgba(99,102,241,0.08)' : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${active === i ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.05)'}`,
+                borderRadius: '12px', cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <span style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: '0.68rem', color: '#475569',
+                    textTransform: 'uppercase', letterSpacing: '0.08em'
+                  }}>{p.category}</span>
+                  <span style={{
+                    width: 7, height: 7, borderRadius: '50%',
+                    background: p.statusColor,
+                    boxShadow: `0 0 8px ${p.statusColor}`
+                  }} />
+                </div>
+                <div style={{
+                  fontSize: '0.875rem', fontWeight: 600,
+                  color: active === i ? '#a78bfa' : '#94a3b8',
+                  lineHeight: 1.4, transition: 'color 0.2s'
+                }}>{p.title}</div>
               </div>
             ))}
           </div>
 
-          {/* Tech Stack Sub-pills */}
-          <div className="flex flex-wrap gap-2 pt-4 border-t border-slate-800/60">
-            {currentStage.tech.map((t, i) => (
-              <span key={i} className="text-[11px] font-mono bg-[#0f172a] text-slate-400 px-3 py-1 rounded border border-slate-800">
-                {t}
-              </span>
-            ))}
+          <div style={{
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '16px', padding: '2rem',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
+              borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '1.5rem', marginBottom: '1.5rem'
+            }}>
+              <div>
+                <div style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '0.65rem', color: '#6366f1',
+                  textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.4rem'
+                }}>SYSTEM DIAGNOSTICS LOG</div>
+                <h3 style={{
+                  fontSize: '1.2rem', fontWeight: 700,
+                  color: '#f1f5f9', lineHeight: 1.3, maxWidth: 420
+                }}>{proj.title}</h3>
+              </div>
+              <span style={{
+                padding: '0.25rem 0.75rem',
+                border: `1px solid ${proj.statusColor}40`,
+                borderRadius: '6px', color: proj.statusColor,
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: '0.68rem', fontWeight: 700,
+                whiteSpace: 'nowrap', letterSpacing: '0.05em'
+              }}>{proj.status}</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem', marginBottom: '1.75rem' }}>
+              {proj.metrics.map((m, j) => (
+                <div key={j} style={{
+                  background: 'rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderRadius: '10px', padding: '1rem', textAlign: 'center'
+                }}>
+                  <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.65rem', color: '#475569', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{m.label}</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#f1f5f9', marginTop: '0.35rem' }}>{m.value}</div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>{"// PIPELINE ABSTRACT"}</div>
+              <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.8 }}>{proj.summary}</p>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>{"// RUNTIME DEPENDENCIES"}</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {proj.tech.map((t, k) => {
+                  const TIcon = t.icon;
+                  return (
+                    <div key={k} style={{
+                      display: 'flex', alignItems: 'center', gap: '0.4rem',
+                      padding: '0.3rem 0.75rem',
+                      background: 'rgba(0,0,0,0.3)',
+                      border: '1px solid rgba(255,255,255,0.07)',
+                      borderRadius: '6px',
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: '0.75rem', color: '#94a3b8'
+                    }}>
+                      <TIcon style={{ color: t.color }} size={12} />
+                      {t.name}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '0.68rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.75rem' }}>{"// SYSTEM IMPLEMENTATION LOGS"}</div>
+              <ul style={{ listStyle: 'none' }}>
+                {proj.arch.map((a, l) => (
+                  <li key={l} style={{
+                    display: 'flex', gap: '0.75rem',
+                    fontSize: '0.82rem', color: '#94a3b8',
+                    lineHeight: 1.7, padding: '0.2rem 0'
+                  }}>
+                    <span style={{ color: '#6366f1', fontFamily: 'monospace', flexShrink: 0 }}>✓</span>
+                    {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
