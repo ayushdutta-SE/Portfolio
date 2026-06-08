@@ -3,62 +3,100 @@ import { useState } from 'react';
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const navigationLinks = [
-    { name: "About", href: "#about" },
-    { name: "Skills", href: "#skills" },
-    { name: "Projects", href: "#projects" }
+  const links = [
+    { name: 'about', href: '#home' },
+    { name: 'skills', href: '#skills' },
+    { name: 'experience', href: '#experience' },
+    { name: 'projects', href: '#projects' },
+    { name: 'contact', href: '#contact' },
   ];
 
-  const connectOptions = [
-    { name: "GitHub", url: "https://github.com/ayushdutta-SE", color: "#f05032" },
-    { name: "LinkedIn", url: "https://linkedin.com/in/ayush-dutta-se", color: "#0ea5e9" },
-    { name: "Email", url: "mailto:your-email@example.com", color: "#22c55e" }
+  const socials = [
+    { name: 'GitHub', url: 'https://github.com/ayushdutta-SE', color: '#f05032' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/ayushdutta-se/', color: '#0ea5e9' },
+    { name: 'Email', url: 'mailto:ayush.dutta.cloud@gmail.com', color: '#22c55e' },
   ];
 
   return (
-    <nav className="w-full bg-[#0f172a]/80 backdrop-blur-md border-b border-slate-900 sticky top-0 z-50 px-6 py-4">
-      <div className="max-w-5xl mx-auto flex justify-between items-center relative">
-        
-        {/* Brand Identity Signature */}
-        <a href="#" className="font-mono font-bold text-slate-100 text-lg tracking-tight hover:text-blue-400 transition-colors">
-          Ayush<span className="text-blue-500">.</span>
-        </a>
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+      background: 'rgba(3,7,18,0.85)',
+      backdropFilter: 'blur(20px)',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+    }}>
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace",
+          fontWeight: 600, fontSize: '1rem', color: '#f1f5f9'
+        }}>
+          Ayush<span style={{ color: '#6366f1' }}>.</span>dev
+        </div>
 
-        {/* Global Navigation Assembly Menu */}
-        <div className="flex items-center gap-6 font-mono text-xs">
-          {navigationLinks.map((link, idx) => (
-            <a key={idx} href={link.href} className="text-slate-400 hover:text-slate-200 transition-colors">
-              {link.name}
-            </a>
+        <div className="hidden md:flex items-center gap-8">
+          {links.map(l => (
+            <a key={l.name} href={l.href} style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.75rem', color: '#94a3b8',
+              textDecoration: 'none', letterSpacing: '0.05em',
+              transition: 'color 0.2s'
+            }}
+              onMouseEnter={e => e.target.style.color = '#22d3ee'}
+              onMouseLeave={e => e.target.style.color = '#94a3b8'}
+            >{l.name}</a>
           ))}
+        </div>
 
-          {/* Interactive Connect Dropdown Trigger Controller */}
+        <div className="flex items-center gap-3">
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '0.5rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '0.72rem', color: '#10b981'
+          }}>
+            <span style={{
+              width: 6, height: 6, borderRadius: '50%',
+              background: '#10b981', animation: 'blink 2s infinite'
+            }} />
+            available for hire
+          </div>
+
           <div className="relative">
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="bg-blue-500/10 border border-blue-500/30 text-blue-400 px-3 py-1.5 rounded-md hover:bg-blue-500/20 transition-all font-semibold flex items-center gap-1"
-            >
-              Connect <span className={`text-[10px] transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}>▼</span>
+            <button onClick={() => setIsOpen(!isOpen)} style={{
+              background: 'rgba(99,102,241,0.12)',
+              border: '1px solid rgba(99,102,241,0.3)',
+              color: '#a78bfa', padding: '0.35rem 0.9rem',
+              borderRadius: '6px', cursor: 'pointer',
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem'
+            }}>
+              connect <span style={{ fontSize: '0.6rem', transform: isOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }}>▼</span>
             </button>
 
-            {/* Dropdown Popup Panel Overlay */}
             {isOpen && (
               <>
-                {/* Backdrop closer click capture barrier */}
-                <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-                
-                <div className="absolute right-0 mt-2 w-40 bg-[#0d1526] border border-slate-800 rounded-lg shadow-2xl z-20 overflow-hidden transform origin-top-right transition-all animate-fadeIn">
-                  {connectOptions.map((option, i) => (
-                    <a
-                      key={i}
-                      href={option.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block px-4 py-2.5 text-slate-300 hover:bg-slate-800/40 text-left transition-colors border-b border-slate-900/50 last:border-0 font-medium"
+                <div style={{ position: 'fixed', inset: 0, zIndex: 10 }} onClick={() => setIsOpen(false)} />
+                <div style={{
+                  position: 'absolute', right: 0, top: '110%',
+                  width: 160, background: '#0d1526',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '10px', overflow: 'hidden',
+                  zIndex: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
+                }}>
+                  {socials.map((s, i) => (
+                    <a key={i} href={s.url} target="_blank" rel="noreferrer"
                       onClick={() => setIsOpen(false)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '0.5rem',
+                        padding: '0.65rem 1rem', color: '#cbd5e1',
+                        textDecoration: 'none', fontSize: '0.82rem',
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        borderBottom: i < socials.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                        transition: 'background 0.15s'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                     >
-                      <span className="inline-block w-2 h-2 rounded-full mr-2" style={{ backgroundColor: option.color }} />
-                      {option.name}
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: s.color, flexShrink: 0 }} />
+                      {s.name}
                     </a>
                   ))}
                 </div>
@@ -66,7 +104,6 @@ export default function Navbar() {
             )}
           </div>
         </div>
-
       </div>
     </nav>
   );
